@@ -1,0 +1,6 @@
+# https://swiftpackageindex.com/SwiftPackageIndex/SPIManifest/documentation
+version: 1
+builder:
+  configs:
+  - documentation_targets: [PROJECT_TARGET]
+    platform: ios

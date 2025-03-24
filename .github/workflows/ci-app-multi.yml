@@ -1,0 +1,101 @@
+# GitHub Actions Virtual Environments
+# https://github.com/actions/virtual-environments/
+
+# A basic workflow intended for typical iOS and/or macOS apps
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+env:
+  WORKSPACE: PROJECT.xcworkspace
+
+  SCHEME_UNIT_IOS: UnitTests-iOS
+  SCHEME_UI_IOS: UITests-iOS
+
+  SCHEME_UNIT_MACOS: UnitTests-macOS
+  SCHEME_UI_MACOS: UITests-macOS
+
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
+
+  IOS_DEST: "platform=iOS Simulator,name=iPhone 15,OS=latest"
+  MACOS_DEST: "platform=macOS,arch=x86_64"
+
+jobs:
+  env-details:
+    name: Environment details
+    runs-on: macos-14
+    steps:
+      - name: xcode version
+        run: xcodebuild -version -sdk
+
+      - name: list simulators
+        run: |
+          xcrun simctl delete unavailable
+          xcrun simctl list
+
+      - name: ruby versions
+        run: |
+          ruby --version
+          gem --version
+          bundler --version
+
+  main:
+    name: Build and Test
+    runs-on: macos-14
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+
+      # https://github.com/ruby/setup-ruby
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: make
+        run: make
+
+      - name: iOS Unit Tests
+        run: |
+          set -o pipefail
+          xcodebuild clean test \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME_UNIT_IOS" \
+            -destination "$IOS_DEST" \
+            CODE_SIGN_IDENTITY="-" | bundle exec xcpretty -c
+
+      - name: iOS UI Tests
+        run: |
+          set -o pipefail
+          xcodebuild clean test \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME_UI_IOS" \
+            -destination "$IOS_DEST" \
+            CODE_SIGN_IDENTITY="-" | bundle exec xcpretty -c
+
+      - name: macOS Unit Tests
+        run: |
+          set -o pipefail
+          xcodebuild clean test \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME_UNIT_MACOS" \
+            -destination "$MACOS_DEST" \
+            CODE_SIGN_IDENTITY="-" | bundle exec xcpretty -c
+
+      - name: macOS UI Tests
+        run: |
+          set -o pipefail
+          xcodebuild clean test \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME_UI_MACOS" \
+            -destination "$MACOS_DEST" \
+            CODE_SIGN_IDENTITY="-" | bundle exec xcpretty -c
