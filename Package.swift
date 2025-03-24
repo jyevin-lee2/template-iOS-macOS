@@ -1,42 +1,41 @@
 // swift-tools-version:5.10
-// The swift-tools-version declares the minimum version
-// of Swift required to build this package.
-// ----------------------------------------------------
 //
-//  Created by Jesse Squires
-//  https://www.jessesquires.com
+// ElegantProject Package Manifest
 //
-//  Documentation
-//  https://jessesquires.github.io/PROJECT
-//
-//  GitHub
-//  https://github.com/jessesquires/PROJECT
-//
-//  Copyright © 2021-present Jesse Squires
-//
+// Created by [Your Name] on [Current Date].
+// Inspired by Jesse Squires’ original project.
+// Documentation: https://jessesquires.github.io/PROJECT
+// GitHub: https://github.com/jessesquires/PROJECT
 
 import PackageDescription
 
 let package = Package(
-    name: "PROJECT_NAME",
+    name: "ElegantProject",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v13)
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v16)
     ],
     products: [
         .library(
-            name: "PROJECT_NAME",
-            targets: ["PROJECT_NAME"]
+            name: "ElegantProject",
+            targets: ["ElegantProject"]
         )
+    ],
+    dependencies: [
+        // Add external dependencies here.
+        // Example:
+        // .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.0")
     ],
     targets: [
         .target(
-            name: "PROJECT_NAME",
+            name: "ElegantProject",
+            dependencies: [],
             path: "Sources"
         ),
         .testTarget(
-            name: "PROJECT_NAME_TESTS",
-            dependencies: ["PROJECT_NAME"],
+            name: "ElegantProjectTests",
+            dependencies: ["ElegantProject"],
             path: "Tests"
         )
     ],
